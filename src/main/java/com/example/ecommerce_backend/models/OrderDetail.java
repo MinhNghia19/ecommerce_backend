@@ -29,14 +29,9 @@ public class OrderDetail {
     @Column(name = "total_money", nullable = false)
     private Float totalMoney;
 
-
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
-
-    @ManyToOne
-    @JoinColumn(name = "product_attribute_id")
-    private ProductAttribute productAttribute;
 
     @ManyToOne
     @JoinColumn(name = "order_id")

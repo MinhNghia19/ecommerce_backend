@@ -8,7 +8,7 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(name = "subcategories")
+@Table(name = "shops")
 @Getter
 @Setter
 @AllArgsConstructor

@@ -17,10 +17,11 @@ public class Attribute {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @Column(name = "name", nullable = false)
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "subcategory_id")
-    private SubCategory subCategory;
+    @JoinColumn(name = "category_id")
+    private Category category;
 }

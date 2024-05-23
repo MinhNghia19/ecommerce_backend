@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Product {
+public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,6 +38,13 @@ public class Product {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private List<ProductImage> productImages;
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductAttribute> attributes;
+
+    @ManyToOne
+    @JoinColumn(name = "subcategory_id")
+    private SubCategory subCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id", nullable = false)
