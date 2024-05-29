@@ -15,5 +15,4 @@ public class RoleService implements IRoleService{
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
     }
-
 }
