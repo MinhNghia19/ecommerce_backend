@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 
 
 import lombok.*;
-;
+;import java.util.List;
 
 @Data//toString
 @Getter
@@ -31,9 +31,16 @@ public class ProductDTO {
 
     private int stockQuantity;
 
+    @JsonProperty("category_id")
+    private Long category_id;
+
     @JsonProperty("subcategory_id")
-    private Long subcategoryId;
+    private Long subcategory_id;
+
 
     @JsonProperty("shop_id")
     private Long shopId;
+
+    private List<ProductAttributeDTO> attributes;
+    private List<ProductImageDTO> images;
 }

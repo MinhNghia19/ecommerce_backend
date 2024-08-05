@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
 public class ProductAttribute {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

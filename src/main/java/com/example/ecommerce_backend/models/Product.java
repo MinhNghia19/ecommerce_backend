@@ -39,12 +39,17 @@ public class Product extends BaseEntity {
             fetch = FetchType.LAZY)
     private List<ProductImage> productImages;
 
-    @OneToMany(mappedBy = "product")
-    private List<ProductAttribute> attributes;
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<ProductAttribute> productAttributes;
 
     @ManyToOne
     @JoinColumn(name = "subcategory_id")
-    private SubCategory subCategory;
+    private SubCategory subcategory;
+    // other fields and methods
+//    @ManyToOne
+//    @JoinColumn(name = "subcategory_id")
+//    private SubCategory subCategory;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id", nullable = false)

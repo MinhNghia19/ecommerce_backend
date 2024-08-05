@@ -1,6 +1,7 @@
 package com.example.ecommerce_backend.repositories;
 
 import com.example.ecommerce_backend.dtos.CategoryDTO;
+import com.example.ecommerce_backend.dtos.ProductDTO;
 import com.example.ecommerce_backend.models.Category;
 import com.example.ecommerce_backend.models.Order;
 import com.example.ecommerce_backend.models.Product;
@@ -14,9 +15,19 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-//    List<Product> findByCategory(Category category);
 
-    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.productImages WHERE p.id = :productId")
-    Optional<Product> getDetailProduct(@Param("productId") Long productId);
+
+    @Query("SELECT p FROM Product p " +
+            "JOIN p.subcategory s " +
+            "JOIN s.category c " +
+            "WHERE c.id = :categoryId")
+    List<Product> findProductsByCategoryId(@Param("categoryId") Long categoryId);
+
+    @Query("SELECT p FROM Product p " +
+            "JOIN p.subcategory s " +
+            "JOIN s.category c " +
+            "WHERE c.id = :categoryId " +
+            "AND s.id = :subcategoryId")
+    List<Product> findProductsBySubcategoryId(@Param("categoryId") Long categoryId, @Param("subcategoryId") Long subcategoryId);
 
 }

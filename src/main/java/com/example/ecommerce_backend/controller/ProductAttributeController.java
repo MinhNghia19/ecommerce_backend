@@ -1,12 +1,10 @@
 package com.example.ecommerce_backend.controller;
 
-import com.example.ecommerce_backend.dtos.ShopDTO;
-import com.example.ecommerce_backend.models.Shop;
-import com.example.ecommerce_backend.models.User;
+import com.example.ecommerce_backend.dtos.ProductAttributeDTO;
+import com.example.ecommerce_backend.models.ProductAttribute;
+import com.example.ecommerce_backend.responses.ProductAttributeResponse;
 import com.example.ecommerce_backend.responses.ResponseObject;
-import com.example.ecommerce_backend.responses.ShopResponse;
-import com.example.ecommerce_backend.responses.UserResponse;
-import com.example.ecommerce_backend.services.shop.ShopService;
+import com.example.ecommerce_backend.services.productattribute.ProductAttributeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,18 +17,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.prefix}/shops")
-public class ShopContronller {
-
-    private final ShopService shopService;
-
-    @PostMapping("/create")
-    public ResponseEntity<ResponseObject> createShop(
-            @Valid @RequestBody ShopDTO shopDTO , BindingResult result
-            ) throws Exception {
+@RequestMapping("${api.prefix}/products_attribute")
+public class ProductAttributeController {
+    private final ProductAttributeService productAttributeService;
+    @PostMapping("")
+    public ResponseEntity<ResponseObject> createPA(
+            @Valid @RequestBody ProductAttributeDTO productAttributeDTO, BindingResult result
+    ) throws Exception {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -44,10 +39,10 @@ public class ShopContronller {
                     .build());
         }
         try {
-            Shop shop = shopService.createShop(shopDTO);
+            ProductAttribute productAttribute = productAttributeService.createPA(productAttributeDTO);
             return ResponseEntity.ok(ResponseObject.builder()
                     .status(HttpStatus.CREATED)
-                    .data(ShopResponse.fromShop(shop))
+                    .data(ProductAttributeResponse.fromProductAttribute(productAttribute))
                     .message("Shop registration successful")
                     .build());
 

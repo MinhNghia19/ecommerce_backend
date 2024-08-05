@@ -1,12 +1,16 @@
 package com.example.ecommerce_backend.responses;
 
+import com.example.ecommerce_backend.models.ProductAttribute;
 import com.example.ecommerce_backend.models.Role;
+import com.example.ecommerce_backend.models.SocialAccount;
 import com.example.ecommerce_backend.models.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,13 +40,14 @@ public class UserResponse {
     private Date dateOfBirth;   
 
     @JsonProperty("facebook_account_id")
-    private int facebookAccountId;
+    private String facebookAccountId;
 
     @JsonProperty("google_account_id")
-    private int googleAccountId;
+    private String googleAccountId;
 
     @JsonProperty("role")
     private Role role;
+
     public static UserResponse fromUser(User user) {
         return UserResponse.builder()
                 .id(user.getId())
@@ -57,4 +62,17 @@ public class UserResponse {
                 .role(user.getRole())
                 .build();
     }
+
+    public static UserResponse fromSocialResponse(User user) {
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .googleAccountId(user.getGoogleAccountId())
+                .facebookAccountId(user.getFacebookAccountId())
+                .build();
+    }
+
 }

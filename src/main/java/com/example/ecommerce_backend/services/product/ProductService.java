@@ -4,14 +4,8 @@ import com.example.ecommerce_backend.dtos.ProductDTO;
 import com.example.ecommerce_backend.dtos.ProductImageDTO;
 import com.example.ecommerce_backend.exception.DataNotFoundException;
 import com.example.ecommerce_backend.exception.InvalidParamException;
-import com.example.ecommerce_backend.models.Product;
-import com.example.ecommerce_backend.models.ProductImage;
-import com.example.ecommerce_backend.models.Shop;
-import com.example.ecommerce_backend.models.SubCategory;
-import com.example.ecommerce_backend.repositories.ProductImageRepository;
-import com.example.ecommerce_backend.repositories.ProductRepository;
-import com.example.ecommerce_backend.repositories.ShopRepository;
-import com.example.ecommerce_backend.repositories.SubCategoryRepository;
+import com.example.ecommerce_backend.models.*;
+import com.example.ecommerce_backend.repositories.*;
 import com.example.ecommerce_backend.responses.ProductResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +19,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -37,14 +31,16 @@ public class ProductService implements IProductService{
     private final ShopRepository shopRepository;
     private final ProductImageRepository productImageRepository;
 
+    private final AttributeRepository attributeRepository;
+
     private static String UPLOADS_FOLDER = "uploads";
     @Override
     public Product createProduct(ProductDTO productDTO) throws DataNotFoundException {
         SubCategory existingsubCategory = subCategoryRepository
-                .findById(productDTO.getSubcategoryId())
+                .findById(productDTO.getSubcategory_id())
                 .orElseThrow(() ->
                         new DataNotFoundException(
-                                "Cannot find category with id: "+productDTO.getSubcategoryId()));
+                                "Cannot find category with id: "+productDTO.getSubcategory_id()));
 
         Shop existingShop = shopRepository
                 .findById(productDTO.getShopId())
@@ -59,7 +55,7 @@ public class ProductService implements IProductService{
                 .description(productDTO.getDescription())
                 .stockQuantity(productDTO.getStockQuantity())
                 .shop(existingShop)
-                .subCategory(existingsubCategory)
+                .subcategory(existingsubCategory)
                 .build();
         return productRepository.save(newProduct);
     }
@@ -91,14 +87,35 @@ public class ProductService implements IProductService{
         return productImageRepository.save(newProductImage);
     }
 
+
+
     @Override
-    public Product getProductById(long productId) throws DataNotFoundException {
-        Optional<Product> optionalProduct = productRepository.getDetailProduct(productId);
-        if(optionalProduct.isPresent()) {
-            return optionalProduct.get();
-        }
-        throw new DataNotFoundException("Cannot find product with id =" + productId);
+    public Product getProductById(long productId) throws Exception {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new DataNotFoundException("Cannot find product with id = " + productId));
     }
+
+
+    @Override
+    public List<Product> getProductByCategoryId(Long categoryId) throws Exception{
+        List<Product> productList = productRepository.findProductsByCategoryId(categoryId);
+
+        if (productList.isEmpty()) {
+            throw new RuntimeException("Cannot find product with category_id: " + categoryId);
+        }
+        return productList;
+    }
+
+    @Override
+    public List<Product> getProductBySubcategoryId(Long categoryId , Long subcategoryId) throws Exception{
+        List<Product> productList = productRepository.findProductsBySubcategoryId(categoryId,subcategoryId);
+
+        if (productList.isEmpty()) {
+            throw new RuntimeException("Cannot find product with subcategoryId: " + subcategoryId);
+        }
+        return productList;
+    }
+
 
     @Override
     public Page<ProductResponse> getAllProducts(String keyword, Long subcategory_id, PageRequest pageRequest) {

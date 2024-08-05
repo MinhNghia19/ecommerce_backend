@@ -3,6 +3,7 @@ package com.example.ecommerce_backend.controller;
 import com.example.ecommerce_backend.dtos.UserDTO;
 import com.example.ecommerce_backend.models.User;
 import com.example.ecommerce_backend.responses.ResponseObject;
+import com.example.ecommerce_backend.responses.SocialAccountResponse;
 import com.example.ecommerce_backend.responses.UserResponse;
 import com.example.ecommerce_backend.services.user.IUserService;
 import com.example.ecommerce_backend.services.utils.ValidationUtils;
@@ -12,10 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,8 +26,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<ResponseObject> createUser(@Valid @RequestBody UserDTO userDTO, BindingResult result)
-            throws Exception
-    {
+            throws Exception {
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -74,4 +71,21 @@ public class UserController {
                 .build());
     }
 
+    @PostMapping("/google-signin")
+    public ResponseEntity<ResponseObject> handleGoogleSignIn(@RequestBody UserDTO userDTO) {
+        try {
+            User user = userService.handleGoogleSignIn(userDTO);
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .status(HttpStatus.OK)
+                    .data(UserResponse.fromSocialResponse(user))
+                    .message("Google Sign-In successful")
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .data(null)
+                    .message("Error during Google Sign-In: " + e.getMessage())
+                    .build());
+        }
+    }
 }

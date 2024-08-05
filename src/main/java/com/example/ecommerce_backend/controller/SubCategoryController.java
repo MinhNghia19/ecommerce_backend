@@ -34,7 +34,7 @@ public class SubCategoryController {
                 .build());
     }
     @GetMapping("/category/{id}")
-    public ResponseEntity<ResponseObject>getSubCategoriesByCategoryId( @PathVariable("id") Long categoryId,BindingResult result){
+    public ResponseEntity<ResponseObject>getSubCategoriesByCategoryId( @PathVariable("id") Long categoryId){
 
         try {
             List<SubCategory> subCategories = subcategoryService.findByCategoryId(categoryId);

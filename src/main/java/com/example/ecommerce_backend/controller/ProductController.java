@@ -5,6 +5,7 @@ import com.example.ecommerce_backend.dtos.ProductDTO;
 import com.example.ecommerce_backend.dtos.ProductImageDTO;
 import com.example.ecommerce_backend.models.Product;
 import com.example.ecommerce_backend.models.ProductImage;
+import com.example.ecommerce_backend.responses.ProductNormalResponse;
 import com.example.ecommerce_backend.responses.ProductResponse;
 import com.example.ecommerce_backend.responses.ResponseObject;
 import com.example.ecommerce_backend.services.product.ProductService;
@@ -24,22 +25,71 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/products")
-public class ProductContronller {
+public class ProductController {
 
     private final ProductService productService;
+
+
 
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseObject> getProductById(
             @PathVariable("id") Long productId
     ) throws Exception {
-        Product existingProduct = productService.getProductById(productId);
-        return ResponseEntity.ok(ResponseObject.builder()
-                .data(ProductResponse.fromProduct(existingProduct))
-                .message("Get detail product successfully")
-                .status(HttpStatus.OK)
-                .build());
-
+        try {
+            Product existingProduct = productService.getProductById(productId);
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .data(ProductResponse.fromProduct(existingProduct))
+                    .message("Get detail product successfully")
+                    .status(HttpStatus.OK)
+                    .build());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseObject.builder()
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .data(null)
+                            .message("Failed to find product: " + e.getMessage())
+                            .build());
+        }
+    }
+    @GetMapping("/category/{id}")
+    public ResponseEntity<ResponseObject>getProductByCategoryId(@PathVariable("id") Long categoryId) {
+        try {
+            List<Product> existingProduct = productService.getProductByCategoryId(categoryId);
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .data(ProductNormalResponse.fromProductList(existingProduct))
+                    .message("Get  product successfully")
+                    .status(HttpStatus.OK)
+                    .build());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseObject.builder()
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .data(null)
+                            .message("Failed to find product: " + e.getMessage())
+                            .build());
+        }
+    }
+    @GetMapping("/category/{categoryId}/{subcategoryId}")
+    public ResponseEntity<ResponseObject>getProductBySubcategoryId(@PathVariable("categoryId") Long categoryId,@PathVariable("subcategoryId") Long subcategoryId) {
+        try {
+            List<Product> existingProduct = productService.getProductBySubcategoryId(categoryId,subcategoryId);
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .data(ProductNormalResponse.fromProductList(existingProduct))
+                    .message("Get  product successfully")
+                    .status(HttpStatus.OK)
+                    .build());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseObject.builder()
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .data(null)
+                            .message("Failed to find product: " + e.getMessage())
+                            .build());
+        }
     }
 
     @PostMapping("")
@@ -48,6 +98,7 @@ public class ProductContronller {
             @Valid @RequestBody ProductDTO productDTO,
             BindingResult result
     ) throws Exception {
+
         if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
                     .stream()
@@ -60,13 +111,26 @@ public class ProductContronller {
                             .build()
             );
         }
-        Product newProduct = productService.createProduct(productDTO);
-        return ResponseEntity.ok(
-                ResponseObject.builder()
-                        .message("Create new product successfully")
-                        .status(HttpStatus.CREATED)
-                        .data(newProduct)
-                        .build());
+        try {
+            Product newProduct = productService.createProduct(productDTO);
+            return ResponseEntity.ok(
+                    ResponseObject.builder()
+                            .message("Create new product successfully")
+                            .status(HttpStatus.CREATED)
+                            .data(ProductResponse.fromProduct(newProduct))
+                            .build());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseObject.builder()
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .data(null)
+                            .message("Failed to create product: " + e.getMessage())
+                            .build());
+        }
+
+
+
     }
 
     @PostMapping(value = "uploads/{id}",
@@ -124,4 +188,7 @@ public class ProductContronller {
                 .build());
     }
 
+
+
 }
+

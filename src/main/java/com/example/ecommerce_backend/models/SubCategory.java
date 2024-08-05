@@ -4,6 +4,8 @@ package com.example.ecommerce_backend.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "subcategories")
 @Getter
@@ -22,5 +24,8 @@ public class SubCategory {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+//    @OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
+//    private List<Product> product;
 
 }

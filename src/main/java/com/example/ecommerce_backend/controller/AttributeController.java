@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/attributes")
-public class AttributeContronller {
+public class AttributeController {
 
     private final AttributeService attributeService;
 

@@ -20,5 +20,17 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 970079410939-28ctr6vgasfm4qj2p0nlorainm558e5i.apps.googleusercontent.com
+            client-secret: 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
+            scope: profile, email
 api:
   prefix: /api/v1
+jwt:
+  expiration: 2592000 #30 days = 30 * 24 * 60 * 60
+  expiration-refresh-token: 5184000 #60 days = 60 * 24 * 60 * 60
+  secretKey: TaqlmGv1iEDMRiFp/pHuID1+T84IABfuA0xXh4GhiUI=

@@ -1,6 +1,7 @@
 package com.example.ecommerce_backend.services.user;
 
 import com.example.ecommerce_backend.dtos.UserDTO;
+import com.example.ecommerce_backend.dtos.UserLoginDTO;
 import com.example.ecommerce_backend.exception.DataNotFoundException;
 import com.example.ecommerce_backend.models.User;
 import com.example.ecommerce_backend.responses.ProductResponse;
@@ -12,6 +13,8 @@ public interface IUserService {
 
     User createUser(UserDTO userDTO) throws DataNotFoundException;
 
+    User handleGoogleSignIn(UserDTO userDTO) throws DataNotFoundException ;
+    String login(UserLoginDTO userLoginDT) throws Exception;
 
     User getUserById(long id);
 

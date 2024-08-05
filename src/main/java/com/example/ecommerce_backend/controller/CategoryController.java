@@ -3,6 +3,8 @@ package com.example.ecommerce_backend.controller;
 
 import com.example.ecommerce_backend.dtos.CategoryDTO;
 import com.example.ecommerce_backend.models.Category;
+import com.example.ecommerce_backend.models.Product;
+import com.example.ecommerce_backend.responses.ProductResponse;
 import com.example.ecommerce_backend.responses.ResponseObject;
 import com.example.ecommerce_backend.services.category.CategoryService;
 import jakarta.validation.Valid;
@@ -33,6 +35,27 @@ public class CategoryController {
                 .data(categories)
                 .build());
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseObject>getCategoryById( @PathVariable("id") Long categoryId)
+    throws  Exception{
+        try {
+            Category existingCategory = categoryService.getCategoryById(categoryId);
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .data(existingCategory)
+                    .message("Get detail category successfully")
+                    .status(HttpStatus.OK)
+                    .build());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseObject.builder()
+                            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .data(null)
+                            .message("Failed to find category: " + e.getMessage())
+                            .build());
+        }
+    }
+
 
     @PostMapping("")
     public ResponseEntity<ResponseObject>createCategory(

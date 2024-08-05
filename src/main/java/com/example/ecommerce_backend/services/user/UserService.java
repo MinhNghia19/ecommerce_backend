@@ -1,10 +1,13 @@
 package com.example.ecommerce_backend.services.user;
 
 import com.example.ecommerce_backend.dtos.UserDTO;
+import com.example.ecommerce_backend.dtos.UserLoginDTO;
 import com.example.ecommerce_backend.exception.DataNotFoundException;
 import com.example.ecommerce_backend.models.Role;
+import com.example.ecommerce_backend.models.SocialAccount;
 import com.example.ecommerce_backend.models.User;
 import com.example.ecommerce_backend.repositories.RoleRepository;
+import com.example.ecommerce_backend.repositories.SocialAccountRepository;
 import com.example.ecommerce_backend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -12,11 +15,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final SocialAccountRepository socialAccountRepository;
     @Override
     public User createUser(UserDTO userDTO) throws DataNotFoundException  {
         if (!userDTO.getPhoneNumber().isBlank() && userRepository.existsByPhoneNumber(userDTO.getPhoneNumber())) {
@@ -43,6 +49,43 @@ public class UserService implements IUserService {
 
         newUser.setRole(role);
         return userRepository.save(newUser);
+    }
+
+    @Override
+    public User handleGoogleSignIn(UserDTO userDTO) throws DataNotFoundException {
+        // Check if the user already exists based on Google Account ID
+        Optional<User> existingUser = userRepository.findByGoogleAccountId(userDTO.getGoogleAccountId());
+        Role role =roleRepository.findById(userDTO.getRoleId())
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Vai trò không tồn tại"));
+        if (!existingUser.isPresent()) {
+
+            User newUser = User.builder()
+                    .googleAccountId(userDTO.getGoogleAccountId())
+                    .fullName(userDTO.getFullName())
+                    .email(userDTO.getEmail())
+                    .build();
+            newUser.setRole(role);
+            userRepository.save(newUser);
+
+            SocialAccount newSocialAccount = SocialAccount.builder()
+                    .provider("google")
+                    .providerId(userDTO.getGoogleAccountId())
+                    .name(userDTO.getFullName())
+                    .email(userDTO.getEmail())
+                    .user(newUser)
+                    .build();
+            socialAccountRepository.save(newSocialAccount);
+            // Trả về người dùng mới
+            return newUser;
+        }
+
+        return existingUser.get();
+    }
+
+    @Override
+    public String login(UserLoginDTO userLoginDT) throws Exception {
+        return null;
     }
 
     @Override
