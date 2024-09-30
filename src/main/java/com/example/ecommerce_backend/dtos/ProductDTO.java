@@ -38,9 +38,6 @@ public class ProductDTO {
     private Long subcategory_id;
 
 
-    @JsonProperty("shop_id")
-    private Long shopId;
-
     private List<ProductAttributeDTO> attributes;
     private List<ProductImageDTO> images;
 }

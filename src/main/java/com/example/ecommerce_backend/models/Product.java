@@ -45,16 +45,6 @@ public class Product extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "subcategory_id")
     private SubCategory subcategory;
-    // other fields and methods
-//    @ManyToOne
-//    @JoinColumn(name = "subcategory_id")
-//    private SubCategory subCategory;
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shop_id", nullable = false)
-    @JsonManagedReference
-    private Shop shop;
 
 
 }

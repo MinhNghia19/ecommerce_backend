@@ -23,16 +23,12 @@ public class ProductResponse {
     private Float price;
     private String thumbnail;
     private String description;
-    private int totalPages;
-
+    private int stockQuantity;
     @JsonProperty("product_images")
     private List<ProductImage> productImages = new ArrayList<>();
 
     @JsonProperty("product_attributes")
     private List<ProductAttributeResponse> productAttributes = new ArrayList<>();
-
-    @JsonProperty("shop_name")
-    private String shopName;
 
     @JsonProperty("subcategory_name")
     private String subcategoryName;
@@ -43,8 +39,7 @@ public class ProductResponse {
                 .price(product.getPrice())
                 .thumbnail(product.getThumbnail())
                 .description(product.getDescription())
-                .totalPages(0)
-                .shopName(product.getShop().getShopName())
+                .stockQuantity(product.getStockQuantity())
                 .subcategoryName(product.getSubcategory().getName())
                 .build();
 
@@ -60,14 +55,19 @@ public class ProductResponse {
         List<ProductAttributeResponse> attributeResponses = new ArrayList<>();
         for (ProductAttribute attribute : productAttributes) {
             attributeResponses.add(ProductAttributeResponse.builder()
-
                     .productId(attribute.getProduct().getId())
                     .attributeName(attribute.getAttribute().getName())
                     .value(attribute.getValue())
-
                     .build());
         }
         return attributeResponses;
+    }
+
+    // Convert a list of Products to a list of ProductResponses
+    public static List<ProductResponse> fromProductList(List<Product> products) {
+        return products.stream()
+                .map(ProductResponse::fromProduct)
+                .collect(Collectors.toList());
     }
 
 }

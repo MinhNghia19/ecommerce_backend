@@ -7,10 +7,12 @@ import com.example.ecommerce_backend.exception.InvalidParamException;
 import com.example.ecommerce_backend.models.*;
 import com.example.ecommerce_backend.repositories.*;
 import com.example.ecommerce_backend.responses.ProductResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +30,6 @@ import java.util.*;
 public class ProductService implements IProductService{
     private final SubCategoryRepository subCategoryRepository;
     private final ProductRepository productRepository;
-    private final ShopRepository shopRepository;
     private final ProductImageRepository productImageRepository;
 
     private final AttributeRepository attributeRepository;
@@ -42,11 +43,6 @@ public class ProductService implements IProductService{
                         new DataNotFoundException(
                                 "Cannot find category with id: "+productDTO.getSubcategory_id()));
 
-        Shop existingShop = shopRepository
-                .findById(productDTO.getShopId())
-                .orElseThrow(() ->
-                        new DataNotFoundException(
-                                "Cannot find shop with id: "+productDTO.getShopId()));
 
         Product newProduct = Product.builder()
                 .productName(productDTO.getName())
@@ -54,7 +50,6 @@ public class ProductService implements IProductService{
                 .thumbnail(productDTO.getThumbnail())
                 .description(productDTO.getDescription())
                 .stockQuantity(productDTO.getStockQuantity())
-                .shop(existingShop)
                 .subcategory(existingsubCategory)
                 .build();
         return productRepository.save(newProduct);
@@ -94,7 +89,23 @@ public class ProductService implements IProductService{
         return productRepository.findById(productId)
                 .orElseThrow(() -> new DataNotFoundException("Cannot find product with id = " + productId));
     }
-
+//    @Override
+//    public Page<ProductResponse> getAllProducts(String keyword, PageRequest pageRequest) {
+//        Page<Product> productsPage;
+//        productsPage = productRepository.searchProducts(keyword ,pageRequest);
+//        return productsPage.map(ProductResponse::fromProduct);
+//    }
+//
+//    @Override
+//    public List<ProductResponse> getProducts(String keyword, PageRequest pageRequest) throws JsonProcessingException {
+//        Page<ProductResponse> productPage = getAllProducts(keyword ,pageRequest);
+//        return productPage.getContent();
+//    }
+    @Override
+    public Page<ProductResponse> searchProducts(String keyword, Long categoryId, Long subcategoryId, Pageable pageable) {
+        Page<Product> products = productRepository.searchProducts(categoryId, subcategoryId, keyword, pageable);
+        return products.map(ProductResponse::fromProduct);
+    }
 
     @Override
     public List<Product> getProductByCategoryId(Long categoryId) throws Exception{
@@ -107,21 +118,26 @@ public class ProductService implements IProductService{
     }
 
     @Override
-    public List<Product> getProductBySubcategoryId(Long categoryId , Long subcategoryId) throws Exception{
-        List<Product> productList = productRepository.findProductsBySubcategoryId(categoryId,subcategoryId);
+    public List<Product> getProductBySubcategoryId(Long subcategoryId) throws Exception{
+        List<Product> productList = productRepository.findProductsBySubcategoryId(subcategoryId);
 
         if (productList.isEmpty()) {
             throw new RuntimeException("Cannot find product with subcategoryId: " + subcategoryId);
         }
         return productList;
     }
-
-
     @Override
-    public Page<ProductResponse> getAllProducts(String keyword, Long subcategory_id, PageRequest pageRequest) {
-
-        return null;
+    public List<Product> findProductsByIds(List<Long> productIds) {
+        return productRepository.findProductsByIds(productIds);
     }
+
+
+
+//    @Override
+//    public Page<ProductResponse> getAllProducts(String keyword, Long subcategory_id, PageRequest pageRequest) {
+//
+//        return null;
+//    }
 
     @Override
     public Product updateProduct(long id, ProductDTO productDTO) throws Exception {
@@ -136,6 +152,7 @@ public class ProductService implements IProductService{
     private boolean isImageFile(MultipartFile file) {
         String contentType = file.getContentType();
         return contentType != null && contentType.startsWith("image/");
+
     }
     @Override
     public String storeFile(MultipartFile file) throws IOException {

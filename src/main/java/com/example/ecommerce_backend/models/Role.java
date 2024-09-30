@@ -20,6 +20,6 @@ public class Role {
     private String name;
 
     public static String ADMIN = "ADMIN";
-    public static String SELLER = "SELLER";
-    public static String CUSTOMER = "CUSTOMER";
+    public static String USER = "USER";
+
 }

@@ -41,7 +41,7 @@ public class UserDTO {
 
 
 
-    @NotNull(message = "Role ID is required")
+//    @NotNull(message = "Role ID is required")
     @JsonProperty("role_id")
     //role admin not permitted
     private Long roleId;

@@ -36,8 +36,6 @@ public class UserResponse {
     @JsonProperty("is_active")
     private boolean active;
 
-    @JsonProperty("date_of_birth")
-    private Date dateOfBirth;   
 
     @JsonProperty("facebook_account_id")
     private String facebookAccountId;
@@ -56,7 +54,6 @@ public class UserResponse {
                 .email(user.getEmail())
                 .address(user.getAddress())
                 .active(user.isActive())
-                .dateOfBirth(user.getDateOfBirth())
                 .facebookAccountId(user.getFacebookAccountId())
                 .googleAccountId(user.getGoogleAccountId())
                 .role(user.getRole())

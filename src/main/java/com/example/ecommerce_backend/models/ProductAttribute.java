@@ -1,5 +1,6 @@
 package com.example.ecommerce_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +20,8 @@ public class ProductAttribute {
     @Column(name = "value", nullable = false)
     private String value;
 
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;

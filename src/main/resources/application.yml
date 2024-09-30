@@ -27,7 +27,36 @@ spring:
           google:
             client-id: 970079410939-28ctr6vgasfm4qj2p0nlorainm558e5i.apps.googleusercontent.com
             client-secret: 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
-            scope: profile, email
+            scope:
+              - email
+              - profile
+#            redirect-uri: http://localhost:8088/api/v1/auth/google/code
+
+
+#            redirect-uri: http://localhost:8088/api/v1/auth/google/code
+
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ecommerce5106@gmail.com
+    password: kmyg vooa oild stsj
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  data:
+    redis:
+      use-redis-cache: false
+      host: localhost
+      port: 6379
 api:
   prefix: /api/v1
 jwt:
